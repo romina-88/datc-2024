@@ -2,16 +2,47 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
-namespace webApiExample.Controllers
+namespace webApiStorageTable.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class StudentsController : ControllerBase
     {
-    [HttpGet(Name = "GetStudents")]
+        
+        
+        private IStudentRepository _studentRepository;
+
+        public StudentsController(IStudentRepository studentRepository)
+        {
+            _studentRepository = studentRepository;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<StudentEntity>> Get()
+        {
+            return await _studentRepository.GetAllStudents();
+        }
+
+        [HttpPost]
+        public async Task Post([FromBody]StudentEntity student) {
+            try
+            {
+                await _studentRepository.CreateStudent(student);
+            }
+            catch (System.Exception)
+            {
+                
+                throw;
+            }
+        }
+
+
+        
+        
+   /* [HttpGet(Name = "GetStudents")]
     public IEnumerable<Student> Get()
     {
-        return StudentRepo.Students;
+            return StudentRepo.Students;
     }
     
   //  [HttpGet(Name = "GetStudent")]
@@ -62,7 +93,7 @@ namespace webApiExample.Controllers
         return StudentRepo.Students;
     }
 
-
+    */
 
     
     }
