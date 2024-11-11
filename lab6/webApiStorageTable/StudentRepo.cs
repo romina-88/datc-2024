@@ -34,11 +34,21 @@ namespace webApiStorageTable
 
         public async Task CreateStudent(StudentEntity student)
         {
-            var insertOperation = TableOperation.Insert(student);
+          //  var insertOperation = TableOperation.Insert(student);
 
-            await _studentsTable.ExecuteAsync(insertOperation);
+        //    await _studentsTable.ExecuteAsync(insertOperation);
 
-          
+            var jsonStudent = JsonConvert.SerializeObject(student);
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(jsonStudent);
+            var base64String = System.Convert.ToBase64String(plainTextBytes);
+
+            QueueClient queueClient = new QueueClient(
+                _connectionString,
+                "students-queue"
+                );
+            queueClient.CreateIfNotExists();
+
+            await queueClient.SendMessageAsync(base64String);
         }
 
         public async Task<List<StudentEntity>> GetAllStudents()
