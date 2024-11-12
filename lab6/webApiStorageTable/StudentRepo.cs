@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
+using Azure.Storage.Queues;
+//WEBSITE_WEBDEPLOY_USE_SCM set to true
 
 namespace webApiStorageTable
 {
@@ -27,7 +30,7 @@ namespace webApiStorageTable
             var account = CloudStorageAccount.Parse(_connectionString);
             _tableClient = account.CreateCloudTableClient();
 
-            _studentsTable = _tableClient.GetTableReference("studentii");
+            _studentsTable = _tableClient.GetTableReference("studenti");
 
             await _studentsTable.CreateIfNotExistsAsync();
         }
@@ -37,7 +40,7 @@ namespace webApiStorageTable
           //  var insertOperation = TableOperation.Insert(student);
 
         //    await _studentsTable.ExecuteAsync(insertOperation);
-
+        // Install from CLI : dotnet add package Azure.Storage.Queues
             var jsonStudent = JsonConvert.SerializeObject(student);
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(jsonStudent);
             var base64String = System.Convert.ToBase64String(plainTextBytes);
